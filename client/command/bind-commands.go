@@ -892,4 +892,21 @@ func BindCommands(app *grumble.App, server *core.SliverServer) {
 			return nil
 		},
 	})
+
+	app.AddCommand(&grumble.Command{
+		Name:     consts.RunScriptStr,
+		Help:     "Run a lua script on the active sliver",
+		LongHelp: help.GetHelpFor(consts.RunScriptStr),
+		Flags: func(f *grumble.Flags) {
+			f.Int("t", "timeout", 10, "command timeout in seconds")
+		},
+		AllowArgs: true,
+		HelpGroup: consts.SliverHelpGroup,
+		Run: func(ctx *grumble.Context) error {
+			fmt.Println()
+			runLuaScript(ctx, server.RPC)
+			fmt.Println()
+			return nil
+		},
+	})
 }

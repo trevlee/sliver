@@ -60,6 +60,7 @@ var (
 		consts.ExecuteShellcodeStr: executeShellcodeHelp,
 		consts.MigrateStr:          migrateHelp,
 		consts.SideloadStr:         sideloadHelp,
+		consts.RunScriptStr:        runScriptHelp,
 
 		consts.WebsitesStr: websitesHelp,
 	}
@@ -256,6 +257,8 @@ Add content to a website:
 [[.Bold]]--process[[.Normal]] - Process to inject into.
 [[.Bold]]--export[[.Normal]] - Name of the export to call (default: ReflectiveLoader)
 `
+	runScriptHelp = `[[.Bold]]Command:[[.Normal]] run-script <filepath to lua script>
+[[.Bold]]About:[[.Normal]] Run a lua script on the active sliver`
 )
 
 const (

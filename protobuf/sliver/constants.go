@@ -120,6 +120,8 @@ const (
 	MsgSpawnDll
 	// MsgIfconfigReq - Ifconfig (network interface config) request
 	MsgIfconfigReq
+	// MsgRunScriptReq - Request to run a lua script
+	MsgRunScriptReq
 
 	// MsgExecuteReq - Execute a command on the remote system
 	MsgExecuteReq

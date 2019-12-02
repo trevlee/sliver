@@ -95,6 +95,8 @@ var (
 		clientpb.MsgMigrate: rpcMigrate,
 
 		clientpb.MsgSideloadReq: rpcSideload,
+
+		clientpb.MsgRunScriptReq: rpcRunScript,
 	}
 
 	tunHandlers = &map[uint32]TunnelHandler{

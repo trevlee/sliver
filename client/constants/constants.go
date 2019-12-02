@@ -110,6 +110,7 @@ const (
 	MigrateStr          = "migrate"
 	SideloadStr         = "sideload"
 	SpawnDllStr         = "spawndll"
+	RunScriptStr        = "run-script"
 
 	WebsitesStr = "websites"
 

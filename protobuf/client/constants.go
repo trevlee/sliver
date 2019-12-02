@@ -66,6 +66,7 @@ const (
 	MsgEggReq
 	MsgExecuteAssemblyReq
 	MsgSideloadReq
+	MsgRunScriptReq
 
 	MsgRegenerate
 

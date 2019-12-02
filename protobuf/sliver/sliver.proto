@@ -252,6 +252,16 @@ message SpawnDll {
   string Result = 2;
 }
 
+message RunScriptReq {
+  string Data = 1;
+  uint32 SliverID = 9;
+}
+
+message RunScript {
+  string Error = 1;
+  string Result = 2;
+}
+
 // DNS Specific messages
 message DNSSessionInit { bytes Key = 1; }
 
