@@ -1,6 +1,8 @@
 package wrappers
 
-import "github.com/bishopfox/sliver/sliver/scripting/lua"
+import (
+	"github.com/bishopfox/sliver/sliver/scripting/lua"
+)
 
 var exports = map[string]lua.LGFunction{
 	// Process utils
@@ -14,6 +16,9 @@ var exports = map[string]lua.LGFunction{
 	"LocalTask": luaLocalTask,
 	// sliver.LocalTask(shellcode, pid) err
 	"RemoteTask": luaRemoteTask,
+
+	// StartProcess(path, args) err
+	// "StartProcess": luaStartProcess,
 }
 
 // Loader sets up the lua state
