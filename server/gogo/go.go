@@ -95,8 +95,10 @@ type GoConfig struct {
 	GOROOT     string
 	GOCACHE    string
 	GOMODCACHE string
-	CGO        string
-	CC         string
+
+	CGO string
+	CC  string
+	CXX string
 
 	Obfuscation bool
 	GOPRIVATE   string
@@ -140,6 +142,7 @@ func GarbleCmd(config GoConfig, cwd string, command []string) ([]byte, error) {
 	cmd.Dir = cwd
 	cmd.Env = []string{
 		fmt.Sprintf("CC=%s", config.CC),
+		fmt.Sprintf("CXX=%s", config.CXX),
 		fmt.Sprintf("CGO_ENABLED=%s", config.CGO),
 		fmt.Sprintf("GOOS=%s", config.GOOS),
 		fmt.Sprintf("GOARCH=%s", config.GOARCH),
@@ -180,6 +183,7 @@ func GoCmd(config GoConfig, cwd string, command []string) ([]byte, error) {
 	cmd.Dir = cwd
 	cmd.Env = []string{
 		fmt.Sprintf("CC=%s", config.CC),
+		fmt.Sprintf("CXX=%s", config.CXX),
 		fmt.Sprintf("CGO_ENABLED=%s", config.CGO),
 		fmt.Sprintf("GOOS=%s", config.GOOS),
 		fmt.Sprintf("GOARCH=%s", config.GOARCH),

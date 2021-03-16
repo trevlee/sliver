@@ -9,6 +9,14 @@ FROM golang:1.16.2
 ENV PROTOC_VER 3.11.4
 ENV PROTOC_GEN_GO_VER 1.3.5
 
+# Zig Setup
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61 \
+    && echo 'deb https://dl.bintray.com/dryzig/zig-ubuntu focal main' | tee -a /etc/apt/sources.list \
+    && apt-get update -y && apt-get install -y zig
+ADD ./zig/zcc /usr/local/bin/zcc
+ADD ./zig/zxx /usr/local/bin/zxx
+RUN chmod +x /usr/local/bin/zcc && chmod +x /usr/local/bin/zxx
+
 # Base packages
 RUN apt-get update --fix-missing && apt-get -y install \
   git build-essential zlib1g zlib1g-dev \
