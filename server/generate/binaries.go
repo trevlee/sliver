@@ -366,9 +366,9 @@ func SliverExecutable(name string, config *models.ImplantConfig) (string, error)
 	}
 	tags := []string{"netgo"}
 	ldflags := []string{"-s -w -buildid="}
-	if !config.Debug && goConfig.GOOS == WINDOWS {
-		ldflags[0] += " -H=windowsgui"
-	}
+	// if !config.Debug && goConfig.GOOS == WINDOWS {
+	// 	ldflags[0] += " -H=windowsgui"
+	// }
 	gcflags := fmt.Sprintf("")
 	asmflags := fmt.Sprintf("")
 	if config.Debug {

