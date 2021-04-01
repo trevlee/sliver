@@ -29,7 +29,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Binject/debug/pe"
+	// TODO: revert back to Binject/debug/pe
+	"debug/pe"
+
 	"github.com/binject/go-donut/donut"
 	"github.com/bishopfox/sliver/protobuf/clientpb"
 	"github.com/bishopfox/sliver/protobuf/sliverpb"
@@ -194,7 +196,19 @@ func (rpc *Server) SpawnDll(ctx context.Context, req *sliverpb.InvokeSpawnDllReq
 	}
 
 	resp := &sliverpb.SpawnDll{}
-	offset, err := getExportOffsetFromMemory(req.Data, req.EntryPoint)
+	//TODO: remove this when fixed in Binject/debug/pe
+	tempFile, err := ioutil.TempFile("", "")
+	if err != nil {
+		return nil, err
+	}
+	err = ioutil.WriteFile(tempFile.Name(), req.Data, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer os.Remove(tempFile.Name())
+	// TODO: revert back when upstream is fixed
+	// offset, err := getExportOffsetFromMemory(req.Data, req.EntryPoint)
+	offset, err := getExportOffsetFromFile(tempFile.Name(), req.EntryPoint)
 	if err != nil {
 		return nil, err
 	}
@@ -343,36 +357,36 @@ func getExportOffsetFromFile(filepath string, exportName string) (funcOffset uin
 	return
 }
 
-func getExportOffsetFromMemory(rawData []byte, exportName string) (funcOffset uint32, err error) {
-	peReader := bytes.NewReader(rawData)
-	fpe, err := pe.NewFileFromMemory(peReader)
-	if err != nil {
-		return 0, err
-	}
+// func getExportOffsetFromMemory(rawData []byte, exportName string) (funcOffset uint32, err error) {
+// 	peReader := bytes.NewReader(rawData)
+// 	fpe, err := pe.NewFileFromMemory(peReader)
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	exportDirectoryRVA := fpe.OptionalHeader.(*pe.OptionalHeader64).DataDirectory[pe.IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress
-	var offset = rvaToFoa(exportDirectoryRVA, fpe)
-	exportDir := ExportDirectory{}
-	buff := &bytes.Buffer{}
-	buff.Write(rawData[offset:])
-	err = binary.Read(buff, binary.LittleEndian, &exportDir)
-	if err != nil {
-		return 0, err
-	}
-	current := exportDir.AddressOfNames
-	nameArrayFOA := rvaToFoa(exportDir.AddressOfNames, fpe)
-	ordinalArrayFOA := rvaToFoa(exportDir.AddressOfNameOrdinals, fpe)
-	funcArrayFoa := rvaToFoa(exportDir.AddressOfFunctions, fpe)
+// 	exportDirectoryRVA := fpe.OptionalHeader.(*pe.OptionalHeader64).DataDirectory[pe.IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress
+// 	var offset = rvaToFoa(exportDirectoryRVA, fpe)
+// 	exportDir := ExportDirectory{}
+// 	buff := &bytes.Buffer{}
+// 	buff.Write(rawData[offset:])
+// 	err = binary.Read(buff, binary.LittleEndian, &exportDir)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	current := exportDir.AddressOfNames
+// 	nameArrayFOA := rvaToFoa(exportDir.AddressOfNames, fpe)
+// 	ordinalArrayFOA := rvaToFoa(exportDir.AddressOfNameOrdinals, fpe)
+// 	funcArrayFoa := rvaToFoa(exportDir.AddressOfFunctions, fpe)
 
-	for i := uint32(0); i < exportDir.NumberOfNames; i++ {
-		index := nameArrayFOA + i*8
-		name := getFuncName(index, rawData, fpe)
-		if strings.Contains(name, exportName) {
-			ordIndex := ordinalArrayFOA + i*2
-			funcOffset = getOrdinal(ordIndex, rawData, fpe, funcArrayFoa)
-		}
-		current += uint32(binary.Size(i))
-	}
+// 	for i := uint32(0); i < exportDir.NumberOfNames; i++ {
+// 		index := nameArrayFOA + i*8
+// 		name := getFuncName(index, rawData, fpe)
+// 		if strings.Contains(name, exportName) {
+// 			ordIndex := ordinalArrayFOA + i*2
+// 			funcOffset = getOrdinal(ordIndex, rawData, fpe, funcArrayFoa)
+// 		}
+// 		current += uint32(binary.Size(i))
+// 	}
 
-	return
-}
+// 	return
+// }
