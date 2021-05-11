@@ -41,7 +41,8 @@ func StartClientConsole() error {
 	}
 
 	fmt.Printf(Info+"Connecting to %s:%d ...\n", config.LHost, config.LPort)
-	rpc, ln, err := transport.MTLSConnect(config)
+	rpc, ln, cancel, err := transport.MTLSConnect(config)
+	defer cancel()
 	if err != nil {
 		fmt.Printf(Warn+"Connection to server failed %v", err)
 		return nil

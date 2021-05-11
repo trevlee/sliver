@@ -32,6 +32,14 @@ else
     exit 1
 fi
 
+## Client
+
+# client / transport
+if go test -tags=client ./client/transport ; then
+    :
+else
+    exit 1
+fi
 
 ## Server
 

@@ -19,11 +19,11 @@ package transport
 */
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/bishopfox/sliver/client/assets"
@@ -44,30 +44,30 @@ const (
 )
 
 // MTLSConnect - Connect to the sliver server
-func MTLSConnect(config *assets.ClientConfig) (rpcpb.SliverRPCClient, *grpc.ClientConn, error) {
+func MTLSConnect(config *assets.ClientConfig) (rpcpb.SliverRPCClient, *grpc.ClientConn, context.CancelFunc, error) {
 	tlsConfig, err := getTLSConfig(config.CACertificate, config.Certificate, config.PrivateKey)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	creds := credentials.NewTLS(tlsConfig)
 	options := []grpc.DialOption{
-		grpc.WithTimeout(defaultTimeout),
 		grpc.WithTransportCredentials(creds),
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(ClientMaxReceiveMessageSize)),
 	}
-	connection, err := grpc.Dial(fmt.Sprintf("%s:%d", config.LHost, config.LPort), options...)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
+	connection, err := grpc.DialContext(ctx, fmt.Sprintf("%s:%d", config.LHost, config.LPort), options...)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, cancel, err
 	}
-	return rpcpb.NewSliverRPCClient(connection), connection, nil
+	return rpcpb.NewSliverRPCClient(connection), connection, cancel, nil
 }
 
 func getTLSConfig(caCertificate string, certificate string, privateKey string) (*tls.Config, error) {
 
 	certPEM, err := tls.X509KeyPair([]byte(certificate), []byte(privateKey))
 	if err != nil {
-		log.Printf("Cannot parse client certificate: %v", err)
+		log.Printf("Cannot parse client certificate: %s", err)
 		return nil, err
 	}
 
@@ -84,7 +84,7 @@ func getTLSConfig(caCertificate string, certificate string, privateKey string) (
 			return rootOnlyVerifyCertificate(caCertificate, rawCerts)
 		},
 	}
-	tlsConfig.BuildNameToCertificate()
+
 	return tlsConfig, nil
 }
 
@@ -97,23 +97,21 @@ func rootOnlyVerifyCertificate(caCertificate string, rawCerts [][]byte) error {
 	ok := roots.AppendCertsFromPEM([]byte(caCertificate))
 	if !ok {
 		log.Printf("Failed to parse root certificate")
-		os.Exit(3)
+		panic("Failed to parse root certificate")
 	}
 
 	cert, err := x509.ParseCertificate(rawCerts[0]) // We should only get one cert
 	if err != nil {
-		log.Printf("Failed to parse certificate: " + err.Error())
+		log.Printf("Failed to parse certificate: %s", err)
 		return err
 	}
 
 	// Basically we only care if the certificate was signed by our authority
 	// Go selects sensible defaults for time and EKU, basically we're only
 	// skipping the hostname check, I think?
-	options := x509.VerifyOptions{
-		Roots: roots,
-	}
+	options := x509.VerifyOptions{Roots: roots}
 	if _, err := cert.Verify(options); err != nil {
-		log.Printf("Failed to verify certificate: " + err.Error())
+		log.Printf("Failed to verify certificate: %s", err)
 		return err
 	}
 
