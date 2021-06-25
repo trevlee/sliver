@@ -24,10 +24,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          # Must fetch at least the immediate parents so that if this is
-          # a pull request then we can checkout the head of the pull request.
-          # Only include this option if you are running this workflow on pull requests.
-          if: ${{ github.event_name == 'pull_request' }}
           fetch-depth: 2
 
       - name: OS Packages
@@ -47,12 +43,14 @@ jobs:
       - name: Protoc-gen-go
         env:
           PROTOC_GEN_GO_VER: 1.26.0
+          GO111MODULES: on
         run: |
           go install google.golang.org/protobuf/cmd/protoc-gen-go@${PROTOC_GEN_GO_VER}
 
       - name: gprc
         env:
           GRPC_GO: v1.1.0
+          GO111MODULES: on
         run: |
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@${GRPC_GO}
 
