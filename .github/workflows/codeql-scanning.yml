@@ -48,10 +48,7 @@ jobs:
         env:
           PROTOC_GEN_GO_VER: 1.26.0
         run: |
-          wget -O protoc-gen-go.tar.gz https://github.com/golang/protobuf/archive/v${PROTOC_GEN_GO_VER}.tar.gz \
-          && tar xvf protoc-gen-go.tar.gz \
-          && cd protobuf-${PROTOC_GEN_GO_VER} \
-          && make install
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@${PROTOC_GEN_GO_VER}
 
       - name: gprc
         env:
