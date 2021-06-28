@@ -61,7 +61,7 @@ jobs:
       - name: Build
         env:
           VERSION: v1.4.17
-      - run: |
+        run: |
           go mod vendor && \
           make
 
