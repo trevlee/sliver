@@ -62,6 +62,7 @@ jobs:
         env:
           VERSION: v1.4.17
       - run: |
+          go mod vendor && \
           make
 
       - name: Perform CodeQL Analysis
