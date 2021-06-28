@@ -27,6 +27,7 @@ jobs:
           # Must fetch at least the immediate parents so that if this is
           # a pull request then we can checkout the head of the pull request.
           # Only include this option if you are running this workflow on pull requests.
+          if: ${{ github.event_name == 'pull_request' }}
           fetch-depth: 2
 
       - name: OS Packages
@@ -47,7 +48,7 @@ jobs:
         env:
           PROTOC_GEN_GO_VER: 1.26.0
         run: |
-          go install google.golang.org/protobuf@${PROTOC_GEN_GO_VER}
+          go install google.golang.org/protobuf@v${PROTOC_GEN_GO_VER}
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
