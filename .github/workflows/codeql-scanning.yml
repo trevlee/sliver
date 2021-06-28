@@ -50,6 +50,12 @@ jobs:
         run: |
           go install google.golang.org/protobuf@v${PROTOC_GEN_GO_VER}
 
+      - name: gRPC
+        env:
+          GRPC_GO: 1.1.0
+        run: |
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${GRPC_GO}
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
