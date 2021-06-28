@@ -70,3 +70,4 @@ jobs:
         uses: github/codeql-action/analyze@v1
         env:
           VERSION: v1.4.17
+          GOOS: linux
