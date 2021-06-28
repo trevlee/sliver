@@ -58,10 +58,13 @@ jobs:
           languages: go
 
       # Build the server ... is this necessary though?
+      - name: Build
+        env:
+          VERSION: v1.4.17
       - run: |
           make
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
         env:
-          VERSION: ${{github.sha}}
+          VERSION: v1.4.17
