@@ -87,10 +87,10 @@ type DNSMessage struct {
 	unknownFields protoimpl.UnknownFields
 
 	Type  DNSMessageType `protobuf:"varint,1,opt,name=Type,proto3,enum=dnspb.DNSMessageType" json:"Type,omitempty"`
-	ID    uint32         `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"` // Upper 24 bits are the session ID, lower 8 bits are the block ID
-	Index uint32         `protobuf:"varint,3,opt,name=Index,proto3" json:"Index,omitempty"`
-	Size  uint32         `protobuf:"varint,4,opt,name=Size,proto3" json:"Size,omitempty"`
-	Data  []byte         `protobuf:"bytes,5,opt,name=Data,proto3" json:"Data,omitempty"`
+	ID    uint32         `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`       // Upper 24 bits are the session ID, lower 8 bits are the block ID
+	Index uint32         `protobuf:"varint,3,opt,name=Index,proto3" json:"Index,omitempty"` // Index of size (e.g. block 0 of 4)
+	Size  uint32         `protobuf:"varint,4,opt,name=Size,proto3" json:"Size,omitempty"`   // Total size
+	Data  []byte         `protobuf:"bytes,5,opt,name=Data,proto3" json:"Data,omitempty"`    // Actual data
 }
 
 func (x *DNSMessage) Reset() {

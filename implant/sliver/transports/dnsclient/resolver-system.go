@@ -10,23 +10,23 @@ import (
 )
 
 // Abstraction on top of miekg/dns and net/dns
-type SystemResolver interface {
+type DNSResolver interface {
 	Address() string
 	A(string) ([][]byte, time.Duration, error)
+	// CName(string) (string, time.Duration, error)
 }
 
-func NewSystemResolver() SystemResolver {
-	return &NetResolver{}
+func NewSystemResolver() DNSResolver {
+	return &SystemResolver{}
 }
 
-type NetResolver struct {
-}
+type SystemResolver struct{}
 
-func (r *NetResolver) Address() string {
+func (r *SystemResolver) Address() string {
 	return "system"
 }
 
-func (r *NetResolver) A(domain string) ([][]byte, time.Duration, error) {
+func (r *SystemResolver) A(domain string) ([][]byte, time.Duration, error) {
 	// {{if .Config.Debug}}
 	log.Printf("[dns] %s->A record of %s?", r.Address(), domain)
 	// {{end}}

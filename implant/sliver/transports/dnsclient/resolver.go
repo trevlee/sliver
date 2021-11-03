@@ -12,7 +12,7 @@ import (
 	"github.com/miekg/dns"
 )
 
-func NewGenericResolver(address string, timeout time.Duration) SystemResolver {
+func NewGenericResolver(address string, timeout time.Duration) DNSResolver {
 	return &GenericResolver{
 		address: address,
 		resolver: &dns.Client{

@@ -113,7 +113,7 @@ func DNSStartSession(parent string, retry time.Duration, timeout time.Duration) 
 
 // SliverDNSClient - The DNS client context
 type SliverDNSClient struct {
-	resolver   SystemResolver
+	resolver   DNSResolver
 	resolvConf *dns.ClientConfig
 	primary    int
 	metrics    map[string][]time.Duration
