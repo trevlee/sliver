@@ -93,9 +93,9 @@ func getCmdArg(executor string) []string {
 	var args []string
 	switch executor {
 	case "cmd":
-		args = []string{"/C", "/S"}
+		args = []string{"/S", "/C"}
 	case "powershell", "psh":
-		args = []string{"-execu", "ByPasS", "-C"}
+		args = []string{"-execu", "-C"}
 	case "exec":
 		args = []string{}
 	case "sh", "bash", "zsh":
