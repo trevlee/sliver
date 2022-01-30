@@ -853,6 +853,14 @@ func getGoProxy() string {
 		buildLog.Debugf("Using GOPROXY from env: %s", value)
 		return value
 	}
+	modCachePath := os.Getenv("HOME") + "/.sliver/go/modcache/cache/download"
+	_, err := os.Stat(modCachePath)
+	if os.IsNotExist(err) {
+		buildLog.Debugf("modcache path does not exist, you need to build an implant first!")
+	} else {
+		buildLog.Debugf("Found modcache path: ", modCachePath)
+		return "file://" + modCachePath
+	}
 	buildLog.Debugf("No GOPROXY found")
 	return ""
 }
