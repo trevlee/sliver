@@ -558,6 +558,7 @@ func BindCommands(con *console.SliverConsoleClient) {
 			f.String("k", "kill", "", "kill the designated session")
 			f.Bool("K", "kill-all", false, "kill all the sessions")
 			f.Bool("C", "clean", false, "clean out any sessions marked as [DEAD]")
+			f.Bool("f", "force", false, "force session action without waiting for results")
 
 			f.Int("t", "timeout", defaultTimeout, "command timeout in seconds")
 		},
@@ -574,7 +575,7 @@ func BindCommands(con *console.SliverConsoleClient) {
 		Help:     "Kill all stale/dead sessions",
 		LongHelp: help.GetHelpFor([]string{consts.SessionsStr, consts.PruneStr}),
 		Flags: func(f *grumble.Flags) {
-
+			f.Bool("f", "force", false, "Force the killing of stale/dead sessions")
 			f.Int("t", "timeout", defaultTimeout, "command timeout in seconds")
 		},
 		Run: func(ctx *grumble.Context) error {
@@ -1631,6 +1632,24 @@ func BindCommands(con *console.SliverConsoleClient) {
 	// [ Filesystem ] ---------------------------------------------
 
 	con.App.AddCommand(&grumble.Command{
+		Name:     consts.MvStr,
+		Help:     "Move or rename a file",
+		LongHelp: help.GetHelpFor([]string{consts.MvStr}),
+		Flags: func(f *grumble.Flags) {
+			f.Int("t", "timeout", defaultTimeout, "command timeout in seconds")
+		},
+		Args: func(a *grumble.Args) {
+			a.String("src", "path to source file")
+			a.String("dst", "path to dest file")
+		},
+		Run: func(ctx *grumble.Context) error {
+			err := filesystem.MvCmd(ctx, con)
+			return err
+		},
+		HelpGroup: consts.SliverHelpGroup,
+	})
+
+	con.App.AddCommand(&grumble.Command{
 		Name:     consts.LsStr,
 		Help:     "List current directory",
 		LongHelp: help.GetHelpFor([]string{consts.LsStr}),
@@ -2145,6 +2164,7 @@ func BindCommands(con *console.SliverConsoleClient) {
 			f.String("k", "kill", "", "kill a beacon")
 			f.Bool("K", "kill-all", false, "kill all beacons")
 			f.Int("t", "timeout", defaultTimeout, "command timeout in seconds")
+			f.Bool("f", "force", false, "force killing of the beacon")
 		},
 		HelpGroup: consts.GenericHelpGroup,
 		Run: func(ctx *grumble.Context) error {

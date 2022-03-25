@@ -266,9 +266,10 @@ func SliverShellcode(name string, config *models.ImplantConfig) (string, error) 
 		GOMODCACHE: gogo.GetGoModCache(appDir),
 		GOROOT:     gogo.GetGoRootDir(appDir),
 		GOPROXY:    getGoProxy(),
+		HTTPPROXY:  getGoHttpProxy(),
 
 		Obfuscation: config.ObfuscateSymbols,
-		GOPRIVATE:   goPrivate(config),
+		GOGARBLE:    goPrivate(config),
 	}
 	pkgPath, err := renderSliverGoCode(name, config, goConfig)
 	if err != nil {
@@ -338,9 +339,10 @@ func SliverSharedLibrary(name string, config *models.ImplantConfig) (string, err
 		GOMODCACHE: gogo.GetGoModCache(appDir),
 		GOROOT:     gogo.GetGoRootDir(appDir),
 		GOPROXY:    getGoProxy(),
+		HTTPPROXY:  getGoHttpProxy(),
 
 		Obfuscation: config.ObfuscateSymbols,
-		GOPRIVATE:   goPrivate(config),
+		GOGARBLE:    goPrivate(config),
 	}
 	pkgPath, err := renderSliverGoCode(name, config, goConfig)
 	if err != nil {
@@ -398,9 +400,10 @@ func SliverExecutable(name string, config *models.ImplantConfig) (string, error)
 		GOCACHE:    gogo.GetGoCache(appDir),
 		GOMODCACHE: gogo.GetGoModCache(appDir),
 		GOPROXY:    getGoProxy(),
+		HTTPPROXY:  getGoHttpProxy(),
 
 		Obfuscation: config.ObfuscateSymbols,
-		GOPRIVATE:   goPrivate(config),
+		GOGARBLE:    goPrivate(config),
 	}
 
 	pkgPath, err := renderSliverGoCode(name, config, goConfig)
@@ -644,7 +647,7 @@ func renderSliverGoCode(name string, config *models.ImplantConfig, goConfig *gog
 		return "", err
 	}
 	buildLog.Debugf("Created %s", goModPath)
-	output, err := gogo.GoMod((*goConfig), sliverPkgDir, []string{"tidy"})
+	output, err := gogo.GoMod((*goConfig), sliverPkgDir, []string{"tidy", "-compat=1.17"})
 	if err != nil {
 		buildLog.Errorf("Go mod tidy failed:\n%s", output)
 		return "", err
@@ -864,6 +867,16 @@ func getGoProxy() string {
 		return "file://" + modCachePath
 	}
 	buildLog.Debugf("No GOPROXY found")
+	return ""
+}
+
+func getGoHttpProxy() string {
+	value, present := os.LookupEnv("HTTP_PROXY")
+	if present {
+		buildLog.Debugf("Using HTTP_PROXY from env: %s", value)
+		return value
+	}
+	buildLog.Debugf("No HTTP_PROXY found")
 	return ""
 }
 

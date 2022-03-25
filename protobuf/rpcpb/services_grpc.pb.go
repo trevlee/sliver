@@ -94,6 +94,7 @@ type SliverRPCClient interface {
 	Ls(ctx context.Context, in *sliverpb.LsReq, opts ...grpc.CallOption) (*sliverpb.Ls, error)
 	Cd(ctx context.Context, in *sliverpb.CdReq, opts ...grpc.CallOption) (*sliverpb.Pwd, error)
 	Pwd(ctx context.Context, in *sliverpb.PwdReq, opts ...grpc.CallOption) (*sliverpb.Pwd, error)
+	Mv(ctx context.Context, in *sliverpb.MvReq, opts ...grpc.CallOption) (*sliverpb.Mv, error)
 	Rm(ctx context.Context, in *sliverpb.RmReq, opts ...grpc.CallOption) (*sliverpb.Rm, error)
 	Mkdir(ctx context.Context, in *sliverpb.MkdirReq, opts ...grpc.CallOption) (*sliverpb.Mkdir, error)
 	Download(ctx context.Context, in *sliverpb.DownloadReq, opts ...grpc.CallOption) (*sliverpb.Download, error)
@@ -113,6 +114,7 @@ type SliverRPCClient interface {
 	Sideload(ctx context.Context, in *sliverpb.SideloadReq, opts ...grpc.CallOption) (*sliverpb.Sideload, error)
 	SpawnDll(ctx context.Context, in *sliverpb.InvokeSpawnDllReq, opts ...grpc.CallOption) (*sliverpb.SpawnDll, error)
 	Screenshot(ctx context.Context, in *sliverpb.ScreenshotReq, opts ...grpc.CallOption) (*sliverpb.Screenshot, error)
+	CurrentTokenOwner(ctx context.Context, in *sliverpb.CurrentTokenOwnerReq, opts ...grpc.CallOption) (*sliverpb.CurrentTokenOwner, error)
 	// *** Pivots ***
 	PivotStartListener(ctx context.Context, in *sliverpb.PivotStartListenerReq, opts ...grpc.CallOption) (*sliverpb.PivotListener, error)
 	PivotStopListener(ctx context.Context, in *sliverpb.PivotStopListenerReq, opts ...grpc.CallOption) (*commonpb.Empty, error)
@@ -703,6 +705,15 @@ func (c *sliverRPCClient) Pwd(ctx context.Context, in *sliverpb.PwdReq, opts ...
 	return out, nil
 }
 
+func (c *sliverRPCClient) Mv(ctx context.Context, in *sliverpb.MvReq, opts ...grpc.CallOption) (*sliverpb.Mv, error) {
+	out := new(sliverpb.Mv)
+	err := c.cc.Invoke(ctx, "/rpcpb.SliverRPC/Mv", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *sliverRPCClient) Rm(ctx context.Context, in *sliverpb.RmReq, opts ...grpc.CallOption) (*sliverpb.Rm, error) {
 	out := new(sliverpb.Rm)
 	err := c.cc.Invoke(ctx, "/rpcpb.SliverRPC/Rm", in, out, opts...)
@@ -868,6 +879,15 @@ func (c *sliverRPCClient) SpawnDll(ctx context.Context, in *sliverpb.InvokeSpawn
 func (c *sliverRPCClient) Screenshot(ctx context.Context, in *sliverpb.ScreenshotReq, opts ...grpc.CallOption) (*sliverpb.Screenshot, error) {
 	out := new(sliverpb.Screenshot)
 	err := c.cc.Invoke(ctx, "/rpcpb.SliverRPC/Screenshot", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sliverRPCClient) CurrentTokenOwner(ctx context.Context, in *sliverpb.CurrentTokenOwnerReq, opts ...grpc.CallOption) (*sliverpb.CurrentTokenOwner, error) {
+	out := new(sliverpb.CurrentTokenOwner)
+	err := c.cc.Invoke(ctx, "/rpcpb.SliverRPC/CurrentTokenOwner", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1387,6 +1407,7 @@ type SliverRPCServer interface {
 	Ls(context.Context, *sliverpb.LsReq) (*sliverpb.Ls, error)
 	Cd(context.Context, *sliverpb.CdReq) (*sliverpb.Pwd, error)
 	Pwd(context.Context, *sliverpb.PwdReq) (*sliverpb.Pwd, error)
+	Mv(context.Context, *sliverpb.MvReq) (*sliverpb.Mv, error)
 	Rm(context.Context, *sliverpb.RmReq) (*sliverpb.Rm, error)
 	Mkdir(context.Context, *sliverpb.MkdirReq) (*sliverpb.Mkdir, error)
 	Download(context.Context, *sliverpb.DownloadReq) (*sliverpb.Download, error)
@@ -1406,6 +1427,7 @@ type SliverRPCServer interface {
 	Sideload(context.Context, *sliverpb.SideloadReq) (*sliverpb.Sideload, error)
 	SpawnDll(context.Context, *sliverpb.InvokeSpawnDllReq) (*sliverpb.SpawnDll, error)
 	Screenshot(context.Context, *sliverpb.ScreenshotReq) (*sliverpb.Screenshot, error)
+	CurrentTokenOwner(context.Context, *sliverpb.CurrentTokenOwnerReq) (*sliverpb.CurrentTokenOwner, error)
 	// *** Pivots ***
 	PivotStartListener(context.Context, *sliverpb.PivotStartListenerReq) (*sliverpb.PivotListener, error)
 	PivotStopListener(context.Context, *sliverpb.PivotStopListenerReq) (*commonpb.Empty, error)
@@ -1639,6 +1661,9 @@ func (UnimplementedSliverRPCServer) Cd(context.Context, *sliverpb.CdReq) (*slive
 func (UnimplementedSliverRPCServer) Pwd(context.Context, *sliverpb.PwdReq) (*sliverpb.Pwd, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Pwd not implemented")
 }
+func (UnimplementedSliverRPCServer) Mv(context.Context, *sliverpb.MvReq) (*sliverpb.Mv, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Mv not implemented")
+}
 func (UnimplementedSliverRPCServer) Rm(context.Context, *sliverpb.RmReq) (*sliverpb.Rm, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Rm not implemented")
 }
@@ -1695,6 +1720,9 @@ func (UnimplementedSliverRPCServer) SpawnDll(context.Context, *sliverpb.InvokeSp
 }
 func (UnimplementedSliverRPCServer) Screenshot(context.Context, *sliverpb.ScreenshotReq) (*sliverpb.Screenshot, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Screenshot not implemented")
+}
+func (UnimplementedSliverRPCServer) CurrentTokenOwner(context.Context, *sliverpb.CurrentTokenOwnerReq) (*sliverpb.CurrentTokenOwner, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CurrentTokenOwner not implemented")
 }
 func (UnimplementedSliverRPCServer) PivotStartListener(context.Context, *sliverpb.PivotStartListenerReq) (*sliverpb.PivotListener, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PivotStartListener not implemented")
@@ -2894,6 +2922,24 @@ func _SliverRPC_Pwd_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SliverRPC_Mv_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(sliverpb.MvReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SliverRPCServer).Mv(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/rpcpb.SliverRPC/Mv",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SliverRPCServer).Mv(ctx, req.(*sliverpb.MvReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SliverRPC_Rm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(sliverpb.RmReq)
 	if err := dec(in); err != nil {
@@ -3232,6 +3278,24 @@ func _SliverRPC_Screenshot_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SliverRPCServer).Screenshot(ctx, req.(*sliverpb.ScreenshotReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SliverRPC_CurrentTokenOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(sliverpb.CurrentTokenOwnerReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SliverRPCServer).CurrentTokenOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/rpcpb.SliverRPC/CurrentTokenOwner",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SliverRPCServer).CurrentTokenOwner(ctx, req.(*sliverpb.CurrentTokenOwnerReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4237,6 +4301,10 @@ var SliverRPC_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SliverRPC_Pwd_Handler,
 		},
 		{
+			MethodName: "Mv",
+			Handler:    _SliverRPC_Mv_Handler,
+		},
+		{
 			MethodName: "Rm",
 			Handler:    _SliverRPC_Rm_Handler,
 		},
@@ -4311,6 +4379,10 @@ var SliverRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Screenshot",
 			Handler:    _SliverRPC_Screenshot_Handler,
+		},
+		{
+			MethodName: "CurrentTokenOwner",
+			Handler:    _SliverRPC_CurrentTokenOwner_Handler,
 		},
 		{
 			MethodName: "PivotStartListener",
